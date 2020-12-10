@@ -1,15 +1,15 @@
 package td
 
 import (
+	"os"
+	"path/filepath"
+
+	"github.com/gotd/td/telegram"
 	"github.com/tdakkota/cliflags"
 	"github.com/urfave/cli/v2"
 	"github.com/urfave/cli/v2/altsrc"
 	"go.uber.org/zap"
 	"golang.org/x/xerrors"
-
-	"github.com/gotd/td/telegram"
-	"os"
-	"path/filepath"
 )
 
 func Flags(e cliflags.Namer) []cli.Flag {

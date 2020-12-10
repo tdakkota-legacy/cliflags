@@ -1,13 +1,12 @@
-package vksdk
+package zerolog
 
 import (
-	"errors"
+	"io"
+	"os"
+	"time"
 
-	"github.com/SevereCloud/vksdk/v2"
-
+	"github.com/rs/zerolog"
 	"github.com/tdakkota/cliflags"
-
-	"github.com/tdakkota/vksdkutil/v2"
 	"github.com/urfave/cli/v2"
 	"github.com/urfave/cli/v2/altsrc"
 )
@@ -15,39 +14,45 @@ import (
 func Flags(e cliflags.Namer) []cli.Flag {
 	return []cli.Flag{
 		altsrc.NewStringFlag(&cli.StringFlag{
-			Name:     e.Name("vk.server"),
+			Name:     e.Name("logging.format"),
 			Required: false,
-			Value:    "https://api.vk.com/method/",
-			Usage:    "VK API Method URL",
-			EnvVars:  e.Env("VK_SERVER"),
+			Value:    "human",
+			Usage:    "logging format(json/human)",
+			EnvVars:  e.Env("LOG_FORMAT"),
 		}),
 		altsrc.NewStringFlag(&cli.StringFlag{
-			Name:     e.Name("vk.user_agent"),
+			Name:     e.Name("logging.level"),
 			Required: false,
-			Value:    "vksdk/" + vksdk.Version + " (+https://github.com/SevereCloud/vksdk)",
-			Usage:    "VK API Client useragent",
-			EnvVars:  e.Env("VK_USER_AGENT"),
-		}),
-		altsrc.NewStringSliceFlag(&cli.StringSliceFlag{
-			Name:     e.Name("vk.tokens"),
-			Aliases:  []string{"tokens"},
-			Required: true,
-			Usage:    "VK API tokens",
-			EnvVars:  e.Env("VK_TOKENS"),
+			Value:    "debug",
+			Usage:    "logging level",
+			EnvVars:  e.Env("LOG_LEVEL"),
 		}),
 	}
 }
 
-var ErrAtLeastOneTokenExpected = errors.New("at least one token expected")
-
-func Build(c *cli.Context) (sdkutil.SDKBuilder, error) {
-	tokens := c.StringSlice("vk.tokens")
-	if len(tokens) < 1 {
-		return sdkutil.SDKBuilder{}, ErrAtLeastOneTokenExpected
+func Build(c *cli.Context) zerolog.Logger {
+	level, err := zerolog.ParseLevel(c.String("logging.level"))
+	if err != nil {
+		level = zerolog.DebugLevel
 	}
 
-	sdk := sdkutil.BuildSDK(tokens[0], tokens[1:]...).
-		WithUserAgent(c.String("vk.user_agent")).
-		WithMethodURL(c.String("vk.server"))
-	return sdk, nil
+	var writer io.Writer
+	switch c.String("logging.format") {
+	case "human":
+		writer = zerolog.ConsoleWriter{
+			TimeFormat: time.RFC822,
+			Out:        os.Stdout,
+		}
+	case "json":
+		writer = os.Stdout
+	default:
+		writer = os.Stdout
+	}
+
+	return zerolog.New(writer).
+		Level(level).
+		With().
+		Caller().
+		Timestamp().
+		Logger()
 }
