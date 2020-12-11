@@ -17,21 +17,21 @@ func Flags(e cliflags.Namer) []cli.Flag {
 		// tg
 		altsrc.NewIntFlag(&cli.IntFlag{
 			Name:     e.Name("tg.app_id"),
-			Required: false,
+			Required: true,
 			Usage:    "Telegram app ID",
 			Aliases:  []string{"app_id"},
 			EnvVars:  e.Env("APP_ID"),
 		}),
 		altsrc.NewStringFlag(&cli.StringFlag{
 			Name:     e.Name("tg.app_hash"),
-			Required: false,
+			Required: true,
 			Usage:    "Telegram app hash",
 			Aliases:  []string{"app_hash"},
 			EnvVars:  e.Env("APP_HASH"),
 		}),
 		altsrc.NewStringFlag(&cli.StringFlag{
 			Name:     e.Name("tg.bot_token"),
-			Required: true,
+			Required: false,
 			Usage:    "Telegram bot token",
 			Aliases:  []string{"token"},
 			EnvVars:  e.Env("BOT_TOKEN"),

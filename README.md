@@ -2,7 +2,6 @@
 
 [![Go](https://github.com/tdakkota/cliflags/workflows/Go/badge.svg)](https://github.com/tdakkota/cliflags/actions)
 [![Documentation](https://godoc.org/github.com/tdakkota/cliflags?status.svg)](https://pkg.go.dev/github.com/tdakkota/cliflags)
-[![codecov](https://codecov.io/gh/tdakkota/cliflags/branch/master/graph/badge.svg)](https://codecov.io/gh/tdakkota/cliflags)
 [![license](https://img.shields.io/github/license/tdakkota/cliflags.svg?maxAge=2592000)](https://github.com/tdakkota/cliflags/blob/master/LICENSE)
 
 Ready to use flag sets for [`github.com/urfave/cli`](https://github.com/urfave/cli).

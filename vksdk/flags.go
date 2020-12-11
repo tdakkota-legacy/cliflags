@@ -3,6 +3,8 @@ package vksdk
 import (
 	"errors"
 
+	"github.com/SevereCloud/vksdk/v2/api"
+
 	"github.com/SevereCloud/vksdk/v2"
 
 	"github.com/tdakkota/cliflags"
@@ -28,6 +30,13 @@ func Flags(e cliflags.Namer) []cli.Flag {
 			Usage:    "VK API Client useragent",
 			EnvVars:  e.Env("VK_USER_AGENT"),
 		}),
+		altsrc.NewIntFlag(&cli.IntFlag{
+			Name:     e.Name("vk.limit"),
+			Required: false,
+			Value:    api.LimitGroupToken,
+			Usage:    "VK API request limit by second",
+			EnvVars:  e.Env("VK_LIMIT"),
+		}),
 		altsrc.NewStringSliceFlag(&cli.StringSliceFlag{
 			Name:     e.Name("vk.tokens"),
 			Aliases:  []string{"tokens"},
@@ -48,6 +57,7 @@ func Build(c *cli.Context) (sdkutil.SDKBuilder, error) {
 
 	sdk := sdkutil.BuildSDK(tokens[0], tokens[1:]...).
 		WithUserAgent(c.String("vk.user_agent")).
-		WithMethodURL(c.String("vk.server"))
+		WithMethodURL(c.String("vk.server")).
+		WithRequestLimit(c.Int("vk.limit"))
 	return sdk, nil
 }
